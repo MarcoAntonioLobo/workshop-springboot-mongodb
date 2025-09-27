@@ -13,15 +13,10 @@ import java.time.Instant;
 @ControllerAdvice
 public class ResourceExceptionHandler {
 
-    @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
-        StandardError err = new StandardError(
-            Instant.now(),
-            HttpStatus.NOT_FOUND.value(),
-            "Not Found",
-            e.getMessage(),
-            request.getRequestURI()
-        );
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
-    }
+	@ExceptionHandler(ObjectNotFoundException.class)
+	public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
+		StandardError err = new StandardError(Instant.now(), HttpStatus.NOT_FOUND.value(), "Not Found", e.getMessage(),
+				request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
 }
