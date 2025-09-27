@@ -14,23 +14,28 @@ import com.example.demo.services.exceptions.ObjectNotFoundException;
 @Service
 public class UserService {
 
-	@Autowired
-	private UserRepository repo;
+    @Autowired
+    private UserRepository repo;
 
-	public List<User> findAll() {
-		return repo.findAll();
-	}
+    public List<User> findAll() {
+        return repo.findAll();
+    }
 
-	public User findById(String id) {
-		Optional<User> obj = repo.findById(id);
-		return obj.orElseThrow(() -> new ObjectNotFoundException("User not found! Id: " + id));
-	}
+    public User findById(String id) {
+        Optional<User> obj = repo.findById(id);
+        return obj.orElseThrow(() -> new ObjectNotFoundException("User not found! Id: " + id));
+    }
 
-	public User insert(User obj) {
-		return repo.save(obj);
-	}
+    public User insert(User obj) {
+        return repo.save(obj);
+    }
 
-	public User fromDTO(UserDTO objDto) {
-		return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
-	}
+    public void delete(String id) {
+        findById(id);
+        repo.deleteById(id);
+    }
+
+    public User fromDTO(UserDTO objDto) {
+        return new User(objDto.getId(), objDto.getName(), objDto.getEmail());
+    }
 }
