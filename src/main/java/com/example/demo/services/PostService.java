@@ -47,10 +47,10 @@ public class PostService {
         newObj.setDate(obj.getDate());
     }
 
-    public List<Post> findByTitle(String text) {
-        List<Post> list = repo.findByTitleContainingIgnoreCase(text);
+    public List<Post> findByText(String text) {
+        List<Post> list = repo.findByText(text);
         if (list.isEmpty()) {
-            throw new ObjectNotFoundException("No posts found with title containing: " + text);
+            throw new ObjectNotFoundException("No posts found with text: " + text);
         }
         return list;
     }

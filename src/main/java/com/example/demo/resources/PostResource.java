@@ -51,10 +51,9 @@ public class PostResource {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Post>> findByTitle(
-            @RequestParam(defaultValue = "") String text) {
+    public ResponseEntity<List<Post>> findByText(@RequestParam(defaultValue = "") String text) {
         text = URL.decodeParam(text);
-        return ResponseEntity.ok(postService.findByTitle(text));
+        return ResponseEntity.ok(postService.findByText(text));
     }
 
     @GetMapping("/datesearch")
