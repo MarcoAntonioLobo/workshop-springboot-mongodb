@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.domain.Post;
 import com.example.demo.repository.PostRepository;
+import com.example.demo.resources.util.URL;
 import com.example.demo.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -64,9 +65,12 @@ public class PostService {
     }
 
     public List<Post> findByDateRange(Date start, Date end) {
-        List<Post> list = repo.findByDateBetween(start, end);
+        Date startDay = URL.startOfDay(start);
+        Date endDay = URL.endOfDay(end);
+        List<Post> list = repo.findByDateBetween(startDay, endDay);
         if (list.isEmpty()) {
-            throw new ObjectNotFoundException("No posts found between dates: " + start + " and " + end);
+            throw new ObjectNotFoundException(
+                "No posts found between dates: " + start + " and " + end);
         }
         return list;
     }

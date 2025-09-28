@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,9 +57,16 @@ public class PostResource {
 
     @GetMapping("/datesearch")
     public ResponseEntity<List<Post>> findByDateRange(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date end) {
-        return ResponseEntity.ok(postService.findByDateRange(start, end));
+            @RequestParam(defaultValue = "") String start,
+            @RequestParam(defaultValue = "") String end) {
+
+        Date startDate = URL.convertDate(start, new Date(0));
+        Date endDate = URL.convertDate(end, new Date());
+
+        startDate = URL.startOfDay(startDate);
+        endDate = URL.endOfDay(endDate);
+
+        return ResponseEntity.ok(postService.findByDateRange(startDate, endDate));
     }
 
     @PostMapping
