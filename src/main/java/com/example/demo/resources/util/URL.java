@@ -10,6 +10,8 @@ import java.util.Date;
 
 public class URL {
 
+    private static final ZoneId GMT_ZONE = ZoneId.of("GMT");
+
     public static String decodeParam(String text) {
         try {
             return URLDecoder.decode(text, "UTF-8");
@@ -19,9 +21,10 @@ public class URL {
     }
 
     public static Date convertDate(String textDate, Date defaultValue) {
+        if (textDate == null || textDate.isBlank()) return defaultValue;
         try {
             LocalDate localDate = LocalDate.parse(textDate); // yyyy-MM-dd
-            return Date.from(localDate.atStartOfDay(ZoneId.of("GMT")).toInstant());
+            return startOfDay(Date.from(localDate.atStartOfDay(GMT_ZONE).toInstant()));
         } catch (Exception e) {
             return defaultValue;
         }
@@ -30,19 +33,17 @@ public class URL {
     public static Date startOfDay(Date date) {
         if (date == null) return null;
         Instant instant = date.toInstant();
-        ZonedDateTime zdt = instant.atZone(ZoneId.of("GMT"))
-                                   .toLocalDate()
-                                   .atStartOfDay(ZoneId.of("GMT"));
+        ZonedDateTime zdt = instant.atZone(GMT_ZONE).toLocalDate().atStartOfDay(GMT_ZONE);
         return Date.from(zdt.toInstant());
     }
 
     public static Date endOfDay(Date date) {
         if (date == null) return null;
         Instant instant = date.toInstant();
-        ZonedDateTime zdt = instant.atZone(ZoneId.of("GMT"))
+        ZonedDateTime zdt = instant.atZone(GMT_ZONE)
                                    .toLocalDate()
                                    .atTime(23, 59, 59, 999_000_000)
-                                   .atZone(ZoneId.of("GMT"));
+                                   .atZone(GMT_ZONE);
         return Date.from(zdt.toInstant());
     }
 }

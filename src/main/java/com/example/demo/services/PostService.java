@@ -69,8 +69,18 @@ public class PostService {
         Date endDay = URL.endOfDay(end);
         List<Post> list = repo.findByDateBetween(startDay, endDay);
         if (list.isEmpty()) {
+            throw new ObjectNotFoundException("No posts found between dates: " + start + " and " + end);
+        }
+        return list;
+    }
+
+    public List<Post> fullSearch(String text, Date start, Date end) {
+        Date startDay = URL.startOfDay(start);
+        Date endDay = URL.endOfDay(end);
+        List<Post> list = repo.findByTextAndDateBetween(text, startDay, endDay);
+        if (list.isEmpty()) {
             throw new ObjectNotFoundException(
-                "No posts found between dates: " + start + " and " + end);
+                "No posts found with text '" + text + "' between dates: " + start + " and " + end);
         }
         return list;
     }

@@ -24,4 +24,16 @@ public interface PostRepository extends MongoRepository<Post, String> {
            "{ 'comments.text': { $regex: ?0, $options: 'i' } } " +
            "] }")
     List<Post> findByText(String text);
+    
+    @Query("{ $and: [ " +
+    	       "{ $or: [ " +
+    	       "{ 'title': { $regex: ?0, $options: 'i' } }, " +
+    	       "{ 'body': { $regex: ?0, $options: 'i' } }, " +
+    	       "{ 'comments.text': { $regex: ?0, $options: 'i' } } " +
+    	       "] }, " +
+    	       "{ 'date': { $gte: ?1, $lte: ?2 } } " +
+    	       "] }")
+    	List<Post> findByTextAndDateBetween(String text, Date start, Date end);
+
 }
+

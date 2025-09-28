@@ -63,9 +63,6 @@ public class PostResource {
         Date startDate = URL.convertDate(start, new Date(0));
         Date endDate = URL.convertDate(end, new Date());
 
-        startDate = URL.startOfDay(startDate);
-        endDate = URL.endOfDay(endDate);
-
         return ResponseEntity.ok(postService.findByDateRange(startDate, endDate));
     }
 
@@ -91,4 +88,20 @@ public class PostResource {
         postService.update(obj);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/fullsearch")
+    public ResponseEntity<List<Post>> fullSearch(
+            @RequestParam(defaultValue = "") String text,
+            @RequestParam(defaultValue = "") String start,
+            @RequestParam(defaultValue = "") String end) {
+
+        text = URL.decodeParam(text);
+        Date startDate = URL.convertDate(start, new Date(0));
+        Date endDate = URL.convertDate(end, new Date());
+        startDate = URL.startOfDay(startDate);
+        endDate = URL.endOfDay(endDate);
+
+        return ResponseEntity.ok(postService.fullSearch(text, startDate, endDate));
+    }
+
 }
