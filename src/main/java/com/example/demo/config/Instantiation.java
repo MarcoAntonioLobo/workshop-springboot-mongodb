@@ -1,30 +1,48 @@
 package com.example.demo.config;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
+import com.example.demo.domain.Post;
 import com.example.demo.domain.User;
+import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserRepository;
 
 @Configuration
 public class Instantiation implements CommandLineRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Override
-    public void run(String... args) throws Exception {
+	@Autowired
+	private PostRepository postRepository;
 
-        userRepository.deleteAll();
+	@Override
+	public void run(String... args) throws Exception {
 
-        User marco = new User(null, "Marco Lobo", "marco@example.com");
-        User ana = new User(null, "Ana Silva", "ana@example.com");
-        User joão = new User(null, "João Pereira", "joao@example.com");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 
-        userRepository.saveAll(List.of(marco, ana, joão));
+		userRepository.deleteAll();
 
-    }
+		postRepository.deleteAll();
+
+		User maria = new User(null, "Maria Brown", "maria@gmail.com");
+		User alex = new User(null, "Alex Green", "alex@gmail.com");
+		User bob = new User(null, "Bob Gray", "bob@gmail.com");
+
+		Post post1 = new Post(null, sdf.parse("21/03/2018"), "Partiu Viagem!!!", "Vou viajar pra São Paulo. Abraços",
+				maria);
+		Post post2 = new Post(null, sdf.parse("23/03/2018"), "Bom dia!!!", "Acordei feliz hoje", maria);
+
+		userRepository.saveAll(List.of(maria, alex, bob));
+
+		postRepository.saveAll(List.of(post1, post2));
+
+	}
 }
