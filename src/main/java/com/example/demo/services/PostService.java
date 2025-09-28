@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,29 @@ public class PostService {
         newObj.setTitle(obj.getTitle());
         newObj.setBody(obj.getBody());
         newObj.setDate(obj.getDate());
+    }
+
+    public List<Post> findByTitle(String text) {
+        List<Post> list = repo.findByTitleContainingIgnoreCase(text);
+        if (list.isEmpty()) {
+            throw new ObjectNotFoundException("No posts found with title containing: " + text);
+        }
+        return list;
+    }
+
+    public List<Post> findByAuthorId(String authorId) {
+        List<Post> list = repo.findByAuthorId(authorId);
+        if (list.isEmpty()) {
+            throw new ObjectNotFoundException("No posts found for authorId: " + authorId);
+        }
+        return list;
+    }
+
+    public List<Post> findByDateRange(Date start, Date end) {
+        List<Post> list = repo.findByDateBetween(start, end);
+        if (list.isEmpty()) {
+            throw new ObjectNotFoundException("No posts found between dates: " + start + " and " + end);
+        }
+        return list;
     }
 }

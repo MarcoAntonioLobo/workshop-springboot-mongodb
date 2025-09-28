@@ -1,9 +1,11 @@
 package com.example.demo.resources;
 
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,16 +14,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.domain.Post;
 import com.example.demo.domain.User;
+import com.example.demo.resources.util.URL;
 import com.example.demo.services.PostService;
 import com.example.demo.services.UserService;
 
 @RestController
-@RequestMapping(value = "/posts")
+@RequestMapping("/posts")
 public class PostResource {
 
     @Autowired
@@ -32,40 +36,54 @@ public class PostResource {
 
     @GetMapping
     public ResponseEntity<List<Post>> findAll() {
-        List<Post> list = postService.findAll();
-        return ResponseEntity.ok().body(list);
+        return ResponseEntity.ok(postService.findAll());
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Post> findById(@PathVariable String id) {
-        Post obj = postService.findById(id);
-        return ResponseEntity.ok().body(obj);
+        return ResponseEntity.ok(postService.findById(id));
     }
 
-    @GetMapping(value = "/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<List<Post>> findByUser(@PathVariable String userId) {
         User user = userService.findById(userId);
-        List<Post> posts = user.getPosts();
-        return ResponseEntity.ok().body(posts);
+        return ResponseEntity.ok(user.getPosts());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Post>> findByTitle(
+            @RequestParam(defaultValue = "") String text) {
+        text = URL.decodeParam(text);
+        return ResponseEntity.ok(postService.findByTitle(text));
+    }
+
+    @GetMapping("/datesearch")
+    public ResponseEntity<List<Post>> findByDateRange(
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date end) {
+        return ResponseEntity.ok(postService.findByDateRange(start, end));
     }
 
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody Post obj) {
         obj = postService.insert(obj);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder
+                    .fromPath("/posts/{id}")
+                    .buildAndExpand(obj.getId())
+                    .toUri();
         return ResponseEntity.created(uri).build();
     }
 
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         postService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(value = "/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Void> update(@RequestBody Post obj, @PathVariable String id) {
         obj.setId(id);
-        obj = postService.update(obj);
+        postService.update(obj);
         return ResponseEntity.noContent().build();
     }
 }
